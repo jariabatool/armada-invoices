@@ -17,8 +17,11 @@ export const ALLOWED_TRANSITIONS: Readonly<Record<InvoiceStatus, readonly Invoic
   paid: [],
 };
 
-/** Statuses a new invoice may be created with. Paid and overdue are reached through the lifecycle. */
-export const INITIAL_STATUSES: readonly InvoiceStatus[] = [InvoiceStatus.draft, InvoiceStatus.sent];
+/**
+ * Statuses a new invoice may be created with. "paid" records an invoice that was already paid;
+ * "overdue" is never chosen directly (a sent invoice with a past due date becomes overdue).
+ */
+export const INITIAL_STATUSES: readonly InvoiceStatus[] = [InvoiceStatus.draft, InvoiceStatus.sent, InvoiceStatus.paid];
 
 /** Why a status rule was broken. Mapped to a 422 response by the service layer. */
 export class InvoiceRuleError extends Error {
@@ -74,7 +77,7 @@ export function resolveStatus(
 /** Validates the status for a new invoice and returns the status to store. */
 export function statusForNewInvoice(requested: InvoiceStatus, dueDate: Date, now: Date = new Date()): InvoiceStatus {
   if (!INITIAL_STATUSES.includes(requested)) {
-    throw new InvoiceRuleError(`New invoices must be created as draft or sent, not ${requested}.`);
+    throw new InvoiceRuleError(`New invoices must be created as draft, sent or paid, not ${requested}.`);
   }
   return resolveStatus(requested, dueDate, null, now);
 }

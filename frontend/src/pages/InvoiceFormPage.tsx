@@ -255,7 +255,7 @@ function InvoiceForm({ clients, invoice }: InvoiceFormProps) {
         id="invoice-status"
         label="Status"
         error={errors.status}
-        hint={statusNote ?? (invoice ? undefined : "New invoices start as draft or sent.")}
+        hint={statusNote ?? (invoice ? undefined : "Choose paid to record an invoice that has already been paid.")}
       >
         <select
           id="invoice-status"

@@ -13,8 +13,8 @@ export const ALLOWED_TRANSITIONS: Readonly<Record<InvoiceStatus, readonly Invoic
   paid: [],
 };
 
-/** Statuses a new invoice can be created with. */
-export const INITIAL_STATUSES: readonly InvoiceStatus[] = ["draft", "sent"];
+/** Statuses a new invoice can be created with ("paid" records an invoice that was already paid). */
+export const INITIAL_STATUSES: readonly InvoiceStatus[] = ["draft", "sent", "paid"];
 
 export const isLocked = (status: InvoiceStatus): boolean => status === "paid";
 

@@ -35,6 +35,7 @@ I chose Express with Prisma and PostgreSQL because invoices and clients are clea
 - An invoice can only be **overdue** after its due date has passed
 - Sending an invoice whose due date has passed marks it **overdue** automatically
 - Moving an overdue invoice's due date into the future sets it back to **sent**
+- New invoices can be created as draft, sent or **paid** (to record an already-paid invoice); a paid invoice never becomes overdue
 
 ## Scheduled job (overdue invoices)
 

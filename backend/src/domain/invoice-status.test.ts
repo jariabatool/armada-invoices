@@ -68,8 +68,12 @@ describe("statusForNewInvoice", () => {
     assert.equal(statusForNewInvoice("sent", PAST, NOW), "overdue");
   });
 
-  it("rejects paid and overdue", () => {
-    assert.throws(() => statusForNewInvoice("paid", FUTURE, NOW), InvoiceRuleError);
+  it("keeps paid as paid, even when the due date has passed", () => {
+    assert.equal(statusForNewInvoice("paid", PAST, NOW), "paid");
+    assert.equal(statusForNewInvoice("paid", FUTURE, NOW), "paid");
+  });
+
+  it("rejects creating an invoice as overdue", () => {
     assert.throws(() => statusForNewInvoice("overdue", PAST, NOW), InvoiceRuleError);
   });
 });
