@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";
+import { InvoiceRuleError } from "../domain/invoice-status.js";
 import { HttpError } from "../utils/http-error.js";
 
 /** 404 for any route that did not match. */
@@ -14,6 +15,12 @@ export function errorHandler(err: unknown, _req: Request, res: Response, _next: 
       error: "Validation failed",
       details: err.issues.map((issue) => ({ field: issue.path.join("."), message: issue.message })),
     });
+    return;
+  }
+
+  // A business rule was broken (e.g. an invalid status change)
+  if (err instanceof InvoiceRuleError) {
+    res.status(422).json({ error: err.message });
     return;
   }
 

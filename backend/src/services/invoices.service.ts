@@ -2,6 +2,7 @@ import { prisma } from "../lib/prisma.js";
 import { InvoiceStatus, type Prisma } from "../generated/prisma/client.js";
 import { formatIsoDate, parseIsoDate, startOfUtcDay } from "../utils/date.js";
 import { notFound } from "../utils/http-error.js";
+import { statusForNewInvoice, statusForUpdate } from "../domain/invoice-status.js";
 import { assertClientOwnership } from "./clients.service.js";
 import type { InvoiceInput, InvoiceListQuery } from "../validators/invoice.validator.js";
 
@@ -60,9 +61,11 @@ export async function getInvoice(userId: string, invoiceId: string): Promise<Inv
 }
 
 export async function createInvoice(userId: string, { dueDate, ...input }: InvoiceInput): Promise<InvoiceDto> {
+  const due = parseIsoDate(dueDate);
+  const status = statusForNewInvoice(input.status, due);
   await assertClientOwnership(userId, input.clientId);
   const invoice = await prisma.invoice.create({
-    data: { ...input, dueDate: parseIsoDate(dueDate) },
+    data: { ...input, status, dueDate: due },
     include: includeClient,
   });
   return toInvoiceDto(invoice);
@@ -73,11 +76,14 @@ export async function updateInvoice(
   invoiceId: string,
   { dueDate, ...input }: InvoiceInput,
 ): Promise<InvoiceDto> {
-  await findOwnedInvoiceOrThrow(userId, invoiceId);
+  const existing = await findOwnedInvoiceOrThrow(userId, invoiceId);
+  const due = parseIsoDate(dueDate);
+  // Also rejects any edit of a paid invoice
+  const status = statusForUpdate(existing.status, input.status, due);
   await assertClientOwnership(userId, input.clientId); // the client may be changed
   const invoice = await prisma.invoice.update({
     where: { id: invoiceId },
-    data: { ...input, dueDate: parseIsoDate(dueDate) },
+    data: { ...input, status, dueDate: due },
     include: includeClient,
   });
   return toInvoiceDto(invoice);
@@ -86,9 +92,10 @@ export async function updateInvoice(
 export async function updateInvoiceStatus(
   userId: string,
   invoiceId: string,
-  status: InvoiceStatus,
+  requestedStatus: InvoiceStatus,
 ): Promise<InvoiceDto> {
-  await findOwnedInvoiceOrThrow(userId, invoiceId);
+  const existing = await findOwnedInvoiceOrThrow(userId, invoiceId);
+  const status = statusForUpdate(existing.status, requestedStatus, existing.dueDate);
   const invoice = await prisma.invoice.update({
     where: { id: invoiceId },
     data: { status },
