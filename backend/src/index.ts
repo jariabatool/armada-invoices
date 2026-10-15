@@ -6,6 +6,7 @@ import { authRouter } from "./routes/auth.js";
 import { clientsRouter } from "./routes/clients.js";
 import { invoicesRouter } from "./routes/invoices.js";
 import { HttpError } from "./lib/http.js";
+import { startOverdueJob } from "./jobs/overdueInvoices.js";
 
 const app = express();
 
@@ -42,4 +43,7 @@ app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
 });
 
 const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => console.log(`API running on http://localhost:${PORT}`));
+app.listen(PORT, () => {
+  console.log(`API running on http://localhost:${PORT}`);
+  startOverdueJob();
+});
