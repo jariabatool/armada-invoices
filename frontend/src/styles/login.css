@@ -12,9 +12,9 @@
   padding: 40px 48px;
   overflow: hidden;
   background:
-    radial-gradient(circle at 85% 15%, rgb(61 219 208 / 18%), transparent 45%),
-    radial-gradient(circle at 10% 90%, rgb(36 83 214 / 45%), transparent 55%),
-    var(--color-navy-900);
+    radial-gradient(circle at 85% 10%, rgb(143 153 255 / 22%), transparent 45%),
+    radial-gradient(circle at 10% 95%, rgb(18 31 196 / 70%), transparent 60%),
+    var(--color-brand-900);
   color: #fff;
 }
 

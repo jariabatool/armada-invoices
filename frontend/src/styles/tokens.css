@@ -1,13 +1,14 @@
 /* Design tokens: every colour, radius and shadow used in the app lives here. */
 :root {
-  /* Brand */
-  --color-navy-900: #0b1b33;
-  --color-navy-800: #12284a;
-  --color-navy-700: #1b3762;
-  --color-primary: #2453d6;
-  --color-primary-hover: #1c43b5;
-  --color-primary-soft: #eaf0ff;
-  --color-accent: #3ddbd0;
+  /* Brand (sampled from the Armada logo) */
+  --color-brand-900: #090f62;
+  --color-brand-700: #0d1797;
+  --color-brand-500: #121fc4;
+  --color-brand-ink: #181d27;
+  --color-primary: var(--color-brand-500);
+  --color-primary-hover: var(--color-brand-700);
+  --color-primary-soft: #eceefe;
+  --color-accent: #8f99ff;
 
   /* Neutrals */
   --color-bg: #f4f6fb;
@@ -15,7 +16,7 @@
   --color-surface-muted: #f8fafc;
   --color-border: #e3e8f0;
   --color-border-strong: #cbd3df;
-  --color-text: #0f1b2d;
+  --color-text: #181d27;
   --color-text-muted: #5b6b82;
   --color-text-subtle: #8a97aa;
 
@@ -29,8 +30,8 @@
   /* Invoice statuses */
   --status-draft-fg: #475569;
   --status-draft-bg: #eef1f5;
-  --status-sent-fg: #1d4ed8;
-  --status-sent-bg: #e8efff;
+  --status-sent-fg: #121fc4;
+  --status-sent-bg: #eceefe;
   --status-paid-fg: #0f7a52;
   --status-paid-bg: #e3f5ec;
   --status-overdue-fg: #c0262d;
@@ -44,7 +45,7 @@
   --shadow-sm: 0 1px 2px rgb(15 27 45 / 6%);
   --shadow-md: 0 4px 16px rgb(15 27 45 / 8%);
   --shadow-lg: 0 20px 48px rgb(15 27 45 / 18%);
-  --focus-ring: 0 0 0 3px rgb(36 83 214 / 25%);
+  --focus-ring: 0 0 0 3px rgb(18 31 196 / 22%);
 
   /* Layout */
   --sidebar-width: 240px;

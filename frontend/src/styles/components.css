@@ -1,35 +1,40 @@
 /* ---------- Logo ---------- */
 .logo {
-  --logo-accent: var(--color-accent);
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  color: var(--color-navy-900);
+  color: var(--color-brand-ink);
 }
 
-.logo--inverted {
+.logo--white {
   color: #fff;
 }
 
 .logo__mark {
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: auto;
   flex-shrink: 0;
-  color: var(--color-navy-900);
 }
 
-.logo--inverted .logo__mark {
-  color: var(--color-primary);
+.logo--white .logo__mark {
+  filter: brightness(0) invert(1);
 }
 
-.logo__text {
-  font-size: 17px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
+/* The wordmark is an alpha mask, so it takes the current text colour */
+.logo__wordmark {
+  display: block;
+  width: 93px;
+  height: 16px;
+  background: currentColor;
+  mask: url("../assets/brand/armada-wordmark.png") no-repeat center / contain;
 }
 
-.logo__sub {
-  font-weight: 400;
+.logo__product {
+  padding-left: 10px;
+  border-left: 1px solid currentColor;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
   opacity: 0.7;
 }
 
@@ -70,7 +75,7 @@
 .btn--primary {
   background: var(--color-primary);
   color: #fff;
-  box-shadow: 0 1px 2px rgb(36 83 214 / 30%);
+  box-shadow: 0 1px 2px rgb(18 31 196 / 30%);
 }
 
 .btn--primary:hover:not(:disabled) {
@@ -689,7 +694,7 @@ select.input {
   display: grid;
   place-items: center;
   padding: 16px;
-  background: rgb(11 27 51 / 50%);
+  background: rgb(9 15 98 / 35%);
   animation: fade-in 120ms ease;
 }
 
@@ -801,14 +806,14 @@ select.input {
   gap: 10px;
   padding: 12px 14px;
   border-radius: var(--radius-md);
-  background: var(--color-navy-900);
+  background: var(--color-brand-ink);
   color: #fff;
   box-shadow: var(--shadow-md);
   animation: pop-in 160ms ease;
 }
 
 .toast--success svg:first-child {
-  color: var(--color-accent);
+  color: #7ee2b8;
 }
 
 .toast--error svg:first-child {

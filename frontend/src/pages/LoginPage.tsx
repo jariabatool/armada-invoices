@@ -43,7 +43,7 @@ export function LoginPage() {
   return (
     <div className="login">
       <section className="login__brand" aria-hidden>
-        <Logo inverted />
+        <Logo variant="white" />
         <div className="login__pitch">
           <h2 className="login__headline">Invoicing that keeps your business moving.</h2>
           <ul className="login__features">

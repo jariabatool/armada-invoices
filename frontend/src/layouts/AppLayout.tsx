@@ -16,7 +16,7 @@ export function AppLayout() {
     <div className="app-shell">
       <aside className="sidebar">
         <div className="sidebar__brand">
-          <Logo inverted />
+          <Logo />
         </div>
         <nav className="sidebar__nav" aria-label="Main">
           {NAV_ITEMS.map(({ to, label, icon: Icon }) => (
