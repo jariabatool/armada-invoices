@@ -1,22 +1,18 @@
-import { useAuth } from "./auth/useAuth";
-import { Header } from "./components/Header";
-import { LoginPage } from "./pages/LoginPage";
-import "./App.css";
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import { RouterProvider } from "react-router/dom";
+import { env } from "./config/env";
+import { AuthProvider } from "./context/auth/AuthProvider";
+import { ToastProvider } from "./context/toast/ToastProvider";
+import { router } from "./routes/router";
 
-function App() {
-  const { user, loading } = useAuth();
-
-  if (loading) return <p className="center muted">Loading…</p>;
-  if (!user) return <LoginPage />;
-
+export function App() {
   return (
-    <>
-      <Header />
-      <main className="container">
-        <p className="muted">Welcome, {user.name}. Clients and invoices are coming next.</p>
-      </main>
-    </>
+    <GoogleOAuthProvider clientId={env.googleClientId}>
+      <AuthProvider>
+        <ToastProvider>
+          <RouterProvider router={router} />
+        </ToastProvider>
+      </AuthProvider>
+    </GoogleOAuthProvider>
   );
 }
-
-export default App;
