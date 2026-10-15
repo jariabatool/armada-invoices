@@ -4,6 +4,7 @@ import cors from "cors";
 import { ZodError } from "zod";
 import { authRouter } from "./routes/auth.js";
 import { clientsRouter } from "./routes/clients.js";
+import { invoicesRouter } from "./routes/invoices.js";
 import { HttpError } from "./lib/http.js";
 
 const app = express();
@@ -16,6 +17,7 @@ app.use(express.json());
 app.get("/health", (_req, res) => res.json({ status: "ok" }));
 app.use("/auth", authRouter);
 app.use("/clients", clientsRouter);
+app.use("/invoices", invoicesRouter);
 
 // 404 for unknown routes
 app.use((_req, res) => res.status(404).json({ error: "Not found" }));
