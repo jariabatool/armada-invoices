@@ -33,7 +33,6 @@
     // "noPropertyAccessFromIndexSignature": true,
     "target": "ES2022",
     "moduleResolution": "NodeNext",
-    "rootDir": "src",
     "outDir": "dist",
     "esModuleInterop": true,
     // Recommended Options
@@ -45,5 +44,5 @@
     "moduleDetection": "force",
     "skipLibCheck": true,
   },
-  "include": ["src"]
+  "include": ["src", "netlify/functions"]
 }
