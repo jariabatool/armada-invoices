@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { GoogleLogin } from "@react-oauth/google";
-import { useNavigate, useLocation } from "react-router";
+import { Link, useNavigate, useLocation } from "react-router";
 import { CheckCircle2 } from "lucide-react";
 import { useAuth } from "../context/auth/useAuth";
 import { Logo } from "../components/ui/Logo";
@@ -89,7 +89,10 @@ export function LoginPage() {
             </div>
           )}
 
-          <p className="login__terms">New here? Signing in with Google creates your account automatically.</p>
+          <p className="login__terms">
+            New here? Signing in with Google creates your account automatically. See our{" "}
+            <Link to="/privacy">privacy policy</Link>.
+          </p>
         </div>
       </section>
     </div>

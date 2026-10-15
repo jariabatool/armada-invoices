@@ -5,10 +5,13 @@ import { InvoiceFormPage } from "../pages/InvoiceFormPage";
 import { InvoicesPage } from "../pages/InvoicesPage";
 import { LoginPage } from "../pages/LoginPage";
 import { NotFoundPage } from "../pages/NotFoundPage";
+import { PrivacyPage } from "../pages/PrivacyPage";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { PublicOnlyRoute } from "./PublicOnlyRoute";
 
 export const router = createBrowserRouter([
+  // Public for everyone, signed in or not
+  { path: "/privacy", element: <PrivacyPage /> },
   {
     element: <PublicOnlyRoute />,
     children: [{ path: "/login", element: <LoginPage /> }],

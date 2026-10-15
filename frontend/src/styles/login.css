@@ -119,3 +119,52 @@
     display: block;
   }
 }
+
+.login__terms a {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+/* ---------- Legal pages (privacy policy) ---------- */
+.legal {
+  min-height: 100vh;
+  background: var(--color-surface);
+}
+
+.legal__header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.legal__content {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 20px 64px;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.legal__content h1 {
+  font-size: 28px;
+  letter-spacing: -0.02em;
+}
+
+.legal__content h2 {
+  margin-top: 28px;
+  font-size: 18px;
+}
+
+.legal__content p,
+.legal__content ul {
+  margin: 10px 0 0;
+}
+
+.legal__content a:not(.back-link) {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+.legal__meta {
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
