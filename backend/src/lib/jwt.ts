@@ -1,21 +1,23 @@
-import jwt from "jsonwebtoken";
+import jwt, { type SignOptions } from "jsonwebtoken";
+import { env } from "../config/env.js";
 
-const JWT_SECRET = process.env.JWT_SECRET;
-if (!JWT_SECRET) throw new Error("JWT_SECRET is not set");
-
-const JWT_EXPIRES_IN = "7d";
-
-export interface JwtPayload {
-  sub: string; // user id
+export interface AuthTokenPayload {
+  /** User id */
+  sub: string;
 }
 
-export const signToken = (userId: string): string =>
-  jwt.sign({ sub: userId } satisfies JwtPayload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+export function signToken(userId: string): string {
+  const payload: AuthTokenPayload = { sub: userId };
+  return jwt.sign(payload, env.JWT_SECRET, {
+    expiresIn: env.JWT_EXPIRES_IN as NonNullable<SignOptions["expiresIn"]>,
+  });
+}
 
-export const verifyToken = (token: string): JwtPayload => {
-  const decoded = jwt.verify(token, JWT_SECRET);
+/** Throws if the token is invalid, expired or has an unexpected payload. */
+export function verifyToken(token: string): AuthTokenPayload {
+  const decoded = jwt.verify(token, env.JWT_SECRET);
   if (typeof decoded === "string" || typeof decoded.sub !== "string") {
     throw new Error("Invalid token payload");
   }
   return { sub: decoded.sub };
-};
+}
