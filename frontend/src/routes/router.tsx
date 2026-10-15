@@ -1,5 +1,6 @@
-import { createBrowserRouter } from "react-router";
+import { createBrowserRouter, Navigate } from "react-router";
 import { AppLayout } from "../layouts/AppLayout";
+import { ClientsPage } from "../pages/ClientsPage";
 import { LoginPage } from "../pages/LoginPage";
 import { NotFoundPage } from "../pages/NotFoundPage";
 import { ProtectedRoute } from "./ProtectedRoute";
@@ -15,7 +16,11 @@ export const router = createBrowserRouter([
     children: [
       {
         element: <AppLayout />,
-        children: [{ path: "*", element: <NotFoundPage /> }],
+        children: [
+          { path: "/", element: <Navigate to="/clients" replace /> },
+          { path: "/clients", element: <ClientsPage /> },
+          { path: "*", element: <NotFoundPage /> },
+        ],
       },
     ],
   },
