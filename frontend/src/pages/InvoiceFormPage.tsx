@@ -1,14 +1,15 @@
 import { useCallback, useState, type FormEvent } from "react";
 import { Link, useNavigate, useParams } from "react-router";
-import { ArrowLeft, Users } from "lucide-react";
+import { ArrowLeft, Lock, Users } from "lucide-react";
 import { clientsApi } from "../api/clients.api";
 import { invoicesApi } from "../api/invoices.api";
 import { useToast } from "../context/toast/useToast";
 import { useAsyncData } from "../hooks/useAsyncData";
 import type { ClientWithCount } from "../types/client";
-import { INVOICE_STATUSES, type Invoice, type InvoiceStatus } from "../types/invoice";
+import type { Invoice, InvoiceStatus } from "../types/invoice";
 import { capitalize } from "../utils/format";
 import { getErrorMessage, getFieldErrors } from "../utils/errors";
+import { ALLOWED_TRANSITIONS, INITIAL_STATUSES, isLocked, resolveStatus } from "../utils/invoice-status";
 import { Button } from "../components/ui/Button";
 import { EmptyState } from "../components/ui/EmptyState";
 import { ErrorState } from "../components/ui/ErrorState";
@@ -38,7 +39,7 @@ function toFormValues(invoice: Invoice | null): FormValues {
   };
 }
 
-function validate(values: FormValues): FieldErrors {
+function validate(values: FormValues, currentStatus: InvoiceStatus | null): FieldErrors {
   const errors: FieldErrors = {};
   const amount = Number(values.amount);
   if (!values.clientId) errors.clientId = "Select a client";
@@ -47,7 +48,18 @@ function validate(values: FormValues): FieldErrors {
   else if (!Number.isFinite(amount) || amount <= 0) errors.amount = "Amount must be greater than 0";
   else if (amount > MAX_AMOUNT) errors.amount = "Amount is too large";
   if (!values.dueDate) errors.dueDate = "Due date is required";
+  const resolution = resolveStatus(values.status, values.dueDate, currentStatus);
+  if (!resolution.ok) errors.status = resolution.error;
   return errors;
+}
+
+/** Explains an automatic status change (e.g. sent → overdue) before saving. */
+function getStatusNote(values: FormValues, currentStatus: InvoiceStatus | null): string | undefined {
+  const resolution = resolveStatus(values.status, values.dueDate, currentStatus);
+  if (!resolution.ok || resolution.status === values.status) return undefined;
+  return resolution.status === "overdue"
+    ? "The due date has passed, so this invoice will be saved as overdue."
+    : "The due date is no longer past, so this invoice will be saved as sent.";
 }
 
 export function InvoiceFormPage() {
@@ -90,6 +102,20 @@ export function InvoiceFormPage() {
         />
       );
     }
+    if (data.invoice && isLocked(data.invoice.status)) {
+      return (
+        <EmptyState
+          icon={<Lock size={22} aria-hidden />}
+          title="This invoice is paid"
+          description="Paid invoices are locked and can’t be edited. You can still delete it from the invoices list."
+          action={
+            <Link to="/invoices" className="btn btn--secondary btn--md">
+              <span>Back to invoices</span>
+            </Link>
+          }
+        />
+      );
+    }
     return <InvoiceForm key={id ?? "new"} clients={data.clients} invoice={data.invoice} />;
   };
 
@@ -118,14 +144,19 @@ function InvoiceForm({ clients, invoice }: InvoiceFormProps) {
   const [formError, setFormError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const currentStatus = invoice?.status ?? null;
+  const statusOptions = invoice ? [invoice.status, ...ALLOWED_TRANSITIONS[invoice.status]] : INITIAL_STATUSES;
+  const statusNote = getStatusNote(values, currentStatus);
+
   const setField = <K extends keyof FormValues>(field: K, value: FormValues[K]) => {
     setValues((current) => ({ ...current, [field]: value }));
-    setErrors((current) => ({ ...current, [field]: undefined }));
+    // The due date affects which statuses are valid, so it also clears a status error
+    setErrors((current) => ({ ...current, [field]: undefined, ...(field === "dueDate" && { status: undefined }) }));
   };
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    const validationErrors = validate(values);
+    const validationErrors = validate(values, currentStatus);
     setErrors(validationErrors);
     if (Object.keys(validationErrors).length > 0) return;
 
@@ -220,15 +251,21 @@ function InvoiceForm({ clients, invoice }: InvoiceFormProps) {
         </FormField>
       </div>
 
-      <FormField id="invoice-status" label="Status" error={errors.status}>
+      <FormField
+        id="invoice-status"
+        label="Status"
+        error={errors.status}
+        hint={statusNote ?? (invoice ? undefined : "New invoices start as draft or sent.")}
+      >
         <select
           id="invoice-status"
           className="input"
           value={values.status}
           onChange={(event) => setField("status", event.target.value as InvoiceStatus)}
+          aria-invalid={Boolean(errors.status)}
           aria-describedby="invoice-status-message"
         >
-          {INVOICE_STATUSES.map((status) => (
+          {statusOptions.map((status) => (
             <option key={status} value={status}>
               {capitalize(status)}
             </option>

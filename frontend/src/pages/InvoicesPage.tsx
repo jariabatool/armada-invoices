@@ -70,8 +70,12 @@ export function InvoicesPage() {
     setUpdatingId(invoice.id);
     try {
       const updated = await invoicesApi.updateStatus(invoice.id, nextStatus);
-      toast.success(`“${invoice.title}” marked as ${nextStatus}`);
-      if (status !== "all" && nextStatus !== status) {
+      toast.success(
+        updated.status === nextStatus
+          ? `“${invoice.title}” marked as ${updated.status}`
+          : `“${invoice.title}” is past its due date, so it was marked as ${updated.status}`,
+      );
+      if (status !== "all" && updated.status !== status) {
         reload(); // it no longer matches the current filter
       } else {
         setData((current) => ({

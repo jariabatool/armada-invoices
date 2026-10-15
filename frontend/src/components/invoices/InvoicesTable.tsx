@@ -1,5 +1,6 @@
 import { Link } from "react-router";
 import { Pencil, Trash2 } from "lucide-react";
+import { isLocked } from "../../utils/invoice-status";
 import type { Invoice, InvoiceStatus } from "../../types/invoice";
 import { formatCurrency, formatDate } from "../../utils/format";
 import { StatusSelect } from "./StatusSelect";
@@ -48,15 +49,28 @@ export function InvoicesTable({ invoices, updatingId, onStatusChange, onDelete }
               <td data-label="Status">
                 <StatusSelect
                   value={invoice.status}
+                  dueDate={invoice.dueDate}
                   disabled={updatingId === invoice.id}
                   onChange={(status) => onStatusChange(invoice, status)}
                   label={`Status of ${invoice.title}`}
                 />
               </td>
               <td className="table__actions">
-                <Link to={`/invoices/${invoice.id}/edit`} className="icon-button" aria-label={`Edit ${invoice.title}`}>
-                  <Pencil size={16} aria-hidden />
-                </Link>
+                {isLocked(invoice.status) ? (
+                  <button
+                    type="button"
+                    className="icon-button"
+                    disabled
+                    aria-label={`${invoice.title} is paid and can't be edited`}
+                    title="Paid invoices are locked"
+                  >
+                    <Pencil size={16} aria-hidden />
+                  </button>
+                ) : (
+                  <Link to={`/invoices/${invoice.id}/edit`} className="icon-button" aria-label={`Edit ${invoice.title}`}>
+                    <Pencil size={16} aria-hidden />
+                  </Link>
+                )}
                 <button
                   type="button"
                   className="icon-button icon-button--danger"
