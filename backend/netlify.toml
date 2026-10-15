@@ -1,20 +1,17 @@
 # Netlify config for the backend API (set Base directory to "backend" in Netlify).
-# The Express app runs as a serverless function; the overdue job runs as a scheduled function.
+# The Express app runs as a Netlify Function (routed to every path in api.mts);
+# the overdue job runs as a scheduled function.
 [build]
   # Apply database migrations, then type-check and compile
   command = "npm run db:deploy && npm run build"
-  # Static output is unused: every request is rewritten to the API function below
+  # Static output is unused: the API function handles every path
   publish = "netlify/static"
 
 [build.environment]
   NODE_VERSION = "22"
+  # These env vars hold non-secret config (URLs, port) that also appear in .env.example
+  SECRETS_SCAN_OMIT_KEYS = "FRONTEND_URL,PORT,NODE_VERSION"
 
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"
-
-[[redirects]]
-  from = "/*"
-  to = "/.netlify/functions/api/:splat"
-  status = 200
-  force = true
